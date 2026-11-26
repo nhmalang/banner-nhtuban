@@ -197,8 +197,18 @@
     const photoModalCaption = document.getElementById('photoModalCaption');
     const photoModalClose = document.getElementById('photoModalClose');
 
+    function toDriveImage(url) {
+      if (!url) return '';
+      const match = String(url).match(/(?:\/d\/|[?&]id=)([a-zA-Z0-9_-]+)/);
+      if (match && match[1]) {
+        return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w1000`;
+      }
+      return url;
+    }
+
     function openPhotoModal(url, caption) {
-      photoModalImg.src = url;
+      photoModalImg.referrerPolicy = 'no-referrer';
+      photoModalImg.src = toDriveImage(url);
       photoModalCaption.textContent = caption || '';
       photoModal.classList.add('open');
     }
@@ -315,7 +325,7 @@
         const tr = document.createElement('tr');
         const nearby = !r.verified ? findNearbyVerified(r) : null;
         tr.innerHTML = `
-          <td class="thumb"><img src="${r.fotoUrl}" alt="Foto banner, klik untuk ukuran penuh" loading="lazy" tabindex="0" role="button"></td>
+          <td class="thumb"><img src="${toDriveImage(r.fotoUrl)}" referrerpolicy="no-referrer" alt="Foto banner, klik untuk ukuran penuh" loading="lazy" tabindex="0" role="button"></td>
           <td>${d.toLocaleDateString('id-ID')}</td>
           <td>${d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</td>
           <td class="coord-cell">${r.latitude && r.longitude ? Number(r.latitude).toFixed(5) + ', ' + Number(r.longitude).toFixed(5) : '—'}</td>
